@@ -1,4 +1,4 @@
-# Created by Swastik Kakran on 2023 Jun 27, 16:47:32 IST
+# Created by Swastik Kakran on 2023 Jun 27, 21:47:32 IST
 # Latest update 2023 Jul 1, 23:24:45 IST
 
 import random
@@ -16,11 +16,12 @@ records = mysql.connector.connect(host='localhost', user='root', password='passw
 cursor = records.cursor()
 
 #Only execute these lines(23-25) to create tables current_records and total_records used in the program later to store data.
-#I already did so I have commented it.
-#You must install mysql first and adjust the connector according to your DB.
+#I already did so I have commented them.
+#You must install MySQL first and adjust the connector according to your DB.
 # I have already created a DB and connected to it in line 13. If you don't have a DB, refer to MySQL docs to create one.
 
 #cursor.execute('CREATE TABLE total_records(name varchar(20), age integer, aadhar_no bigint, room_no integer, DateTime_of_checkin DATETIME, DateTime_of_checkout DATETIME)')
+#records.commit()
 #cursor.execute('CREATE TABLE current_records(name varchar(20), age integer, aadhar_no bigint, room_no integer, DateTime_of_checkin DATETIME)')
 #records.commit()
 
@@ -44,7 +45,9 @@ for i in s:
     aadhar.append(a)
 
 #total number of rooms are 50
-def validRoom():                            # returns a room no. which is not occupied
+# returns a room no. which is not occupied
+#function iterates itself until a non-occupied room number is given
+def validRoom():
     if len(occupied_rooms) == 50:
         return "full"
     
@@ -52,17 +55,19 @@ def validRoom():                            # returns a room no. which is not oc
         room = random.randint(1, 50)
         for i in occupied_rooms:
             if i == room:
-                validRoom()                     #This iterates the function until a non-occupied room number is given
+                validRoom()
         else:
             return room
-    
-def Bill(d1, d2):           #This function calculates the difference between 2 dates and returns the bill for the stay.
+
+#This function calculates the difference between 2 dates and returns the bill for the stay.
+# The bill is calculated per hours. The cost of per hour in Hotel is rs200.
+def Bill(d1, d2):
     difference =  d2 - \
         d1
     print("You stayed in Hotel for ", difference,)
     hours_between = difference.total_seconds() / 3600
-    # The bill is calculated per hours. The cost of per hour in Hotel is rs200.
-    total_bill = hours_between * 200
+    bill = hours_between * 200
+    total_bill = round(bill, 2)
     return total_bill
 
 
@@ -78,10 +83,10 @@ def Booking():
         aadhar_no = int(input('Enter your aadhar card number: '))
 
         if aadhar_no in aadhar:
-            #checks if customer is already checked-in or not
+        #checks if customer is already checked-in or not
             print('\nAadhar already in use! Customer already exists.\n')
         else:
-            # Stores the data entered by the user in a tuple and insert it into table by executing query.
+        # Stores the data entered by the user in a tuple and insert it into table by executing query.
             data = (name, age, aadhar_no, room_no, dateTime)
             s = "INSERT INTO current_records (name, age, aadhar_no, room_no, DateTime_of_checkin) VALUES (%s, %s, %s, %s, %s)"
             cursor.execute(s, data)
@@ -117,7 +122,7 @@ def Checkout():
         print(f'''
 Name: {query[0]}
 age: {query[1]}
-aadhar number: {query[2]}
+aadhar card number: {query[2]}
 room number: {room}''')
         user_checkout = input('Do you confirm your check-out? (Y/y for yes, N/n for no): ')
 
@@ -168,9 +173,9 @@ Please choose an option:
     if user_input == 1:
         Booking()
 
-        # These lines are repeated to update occupied_rooms and aadhar_no after new booking
-        # Functions are not used as functions are not iterable
-        # This extracts all the room numbers and store them in a list.
+# These lines are repeated to update occupied_rooms and aadhar_no after new booking
+# Functions are not used as functions are not iterable
+# This extracts all the room numbers and store them in a list.
         cursor.execute("SELECT room_no FROM current_records;")
         n = cursor.fetchall()
         occupied_rooms = []
@@ -178,7 +183,7 @@ Please choose an option:
             b = i[0]
             occupied_rooms.append(b)
 
-        #this extracts all the adhaar numbers and store them in a list. Used to avoid duplication of data in DB.
+#this extracts all the adhaar numbers and store them in a list. Used to avoid duplication of data in DB.
         cursor.execute("SELECT aadhar_no FROM current_records;")
         s = cursor.fetchall()
         aadhar = []
@@ -191,9 +196,9 @@ Please choose an option:
 
     elif user_input == 3:
         Checkout()
-        # These lines are repeated to update occupied_rooms and aadhar_no after someone check-outs
-        # Functions are not used as functions are not iterable
-        # This extracts all the room numbers and store them in a list.
+# These lines are repeated to update occupied_rooms and aadhar_no after someone check-outs
+# Functions are not used as functions are not iterable
+# This extracts all the room numbers and store them in a list.
         cursor.execute("SELECT room_no FROM current_records;")
         n = cursor.fetchall()
         occupied_rooms = []
@@ -201,7 +206,7 @@ Please choose an option:
             b = i[0]
             occupied_rooms.append(b)
 
-        #this extracts all the adhaar numbers and store them in a list. Used to avoid duplication of data in DB.
+#this extracts all the adhaar numbers and store them in a list. Used to avoid duplication of data in DB.
         cursor.execute("SELECT aadhar_no FROM current_records;")
         s = cursor.fetchall()
         aadhar = []
@@ -221,16 +226,20 @@ Welcome Admin. Please select an option from below:
 2. Display total records
 3. Exit
 > '''))
-                if admin_input == 1:      # Fetches the data from the table and store it in rec1 variable.
+                if admin_input == 1:
+                # Fetches the data from the table and store it in rec1 variable.
+                # then print it by iterating through rec1
                     cursor.execute("SELECT * FROM current_records;")
                     rec1 = cursor.fetchall()
-                    for i in rec1:        # then print it by iterating through rec1
+                    for i in rec1:
                         print(i)
 
-                elif admin_input == 2:    # Fetches the data from the table and store it in rec2 variable.
+                elif admin_input == 2:
+                # Fetches the data from the table and store it in rec2 variable.
+                # then print it by iterating through rec2
                     cursor.execute("SELECT * FROM total_records;")
                     rec2 = cursor.fetchall()
-                    for i in rec2:        # then print it by iterating through rec2
+                    for i in rec2:
                         print(i)
 
                 elif admin_input == 3:
