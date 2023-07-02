@@ -1,4 +1,4 @@
-# Created by Swastik Kakran on 2023 Jun 21, 16:47:32 IST
+# Created by Swastik Kakran on 2023 Jun 27, 16:47:32 IST
 # Latest update 2023 Jul 1, 23:24:45 IST
 
 import random
@@ -14,6 +14,15 @@ records = mysql.connector.connect(host='localhost', user='root', password='passw
 
 # Used for running queries in DB using SQL
 cursor = records.cursor()
+
+#Only execute these lines(23-25) to create tables current_records and total_records used in the program later to store data.
+#I already did so I have commented it.
+#You must install mysql first and adjust the connector according to your DB.
+# I have already created a DB and connected to it in line 13. If you don't have a DB, refer to MySQL docs to create one.
+
+#cursor.execute('CREATE TABLE total_records(name varchar(20), age integer, aadhar_no bigint, room_no integer, DateTime_of_checkin DATETIME, DateTime_of_checkout DATETIME)')
+#cursor.execute('CREATE TABLE current_records(name varchar(20), age integer, aadhar_no bigint, room_no integer, DateTime_of_checkin DATETIME)')
+#records.commit()
 
 # This is used for admin files access
 password = 'password@12345'
@@ -182,6 +191,23 @@ Please choose an option:
 
     elif user_input == 3:
         Checkout()
+        # These lines are repeated to update occupied_rooms and aadhar_no after someone check-outs
+        # Functions are not used as functions are not iterable
+        # This extracts all the room numbers and store them in a list.
+        cursor.execute("SELECT room_no FROM current_records;")
+        n = cursor.fetchall()
+        occupied_rooms = []
+        for i in n:
+            b = i[0]
+            occupied_rooms.append(b)
+
+        #this extracts all the adhaar numbers and store them in a list. Used to avoid duplication of data in DB.
+        cursor.execute("SELECT aadhar_no FROM current_records;")
+        s = cursor.fetchall()
+        aadhar = []
+        for i in s:
+            a = i[0]
+            aadhar.append(a)
 
     elif user_input == 4:
         passwd = input('Enter password to access admin files: ')
