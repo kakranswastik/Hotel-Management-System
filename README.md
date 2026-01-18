@@ -1,5 +1,8 @@
-# Hotel-Management-System
-This is a Hotel guest manageing software coded in Python and SQL.
-In this project, I have connected main code to a pre-defined DB named Records.
-You can connect your own database by making changes in code. I have commented some lines and also wrote their functionalities.
-I you find some problem or have some suggestion feel free to contact me.
+## Hotel-Management-System
+
+ ---
+
+ I built this as my 12th final project using Python and SQL.
+ I didn't copied anyone and tried to do things on my own but well how unique can a project like hotel management system can get.
+ I know no one else is going to see this repo why am I even writing this.
+ It's public for now but maybe I'll private this repo in future IDK.
